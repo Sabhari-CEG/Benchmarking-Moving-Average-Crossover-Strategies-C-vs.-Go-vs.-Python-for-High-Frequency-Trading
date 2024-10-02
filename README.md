@@ -51,15 +51,62 @@ Focuses on optimizing performance and memory usage:
 
 ### Go Implementation
 
-Leverages Go's simplicity and built-in features:
+Leverages Go's simplicity and built-in features for concurrent processing:
 
-- Uses slices for data storage, similar to C++'s vectors
-- Implements straightforward SMA and crossover calculations
-- Utilizes Go's efficient built-in CSV parsing capabilities
+- Uses slices for efficient data storage and manipulation
+- Implements SMA calculation and crossover detection
+- Utilizes Go's efficient built-in file I/O and string parsing capabilities
+- Employs goroutines for parallel processing of data chunks
 
-**Note:** While not using goroutines in this implementation, Go's potential for concurrent processing is notable for larger datasets or more complex strategies.
+**Key features:**
+- Concurrent processing using goroutines
+- Efficient inter-goroutine communication with channels
+- Dynamic workload distribution across multiple CPU cores
+- Balanced between code readability and performance optimization
 
-**Execution time:** ~2.3 seconds
+**Implementation details:**
+1. **Data Loading**: 
+   - Reads CSV file using `bufio.Scanner` for efficient I/O
+   - Parses closing prices into a slice of float64
+
+2. **SMA Calculation** (`calculateSMA` function):
+   - Efficiently calculates Simple Moving Average
+   - Uses a sliding window approach to minimize redundant calculations
+
+3. **Moving Average Crossover** (`movingAverageCrossover` function):
+   - Detects crossovers between short-term and long-term SMAs
+   - Generates buy/sell signals based on crossover events
+   - Sends signals through a channel for concurrent processing
+
+4. **Concurrent Processing**:
+   - Divides the dataset into chunks
+   - Spawns multiple goroutines (default 4) to process data chunks in parallel
+   - Uses a `sync.WaitGroup` to synchronize goroutine completion
+   - Employs a buffered channel for signal collection to prevent blocking
+
+5. **Result Aggregation**:
+   - Main goroutine collects signals from all worker goroutines
+   - Sorts signals into buy and sell categories
+   - Prints aggregated results after all processing is complete
+
+**Performance characteristics:**
+- Execution time: ~2.3 seconds (may vary based on hardware and dataset size)
+- Efficiently utilizes multiple CPU cores for parallel processing
+- Scalable performance with larger datasets due to concurrent design
+
+**Advantages:**
+- Leverages Go's strong suit in concurrent programming
+- Balances simplicity of implementation with performance optimization
+- Easily scalable to handle larger datasets by adjusting the number of goroutines
+
+**Potential for further optimization:**
+- Fine-tuning the number of goroutines based on available CPU cores and dataset size
+- Implementing more sophisticated workload balancing strategies
+- Exploring alternative data structures for even faster processing
+
+This implementation showcases Go's strength in creating efficient, concurrent programs with relatively simple and readable code. It demonstrates how Go can be effectively used for high-performance financial data processing tasks.
+
+
 
 ### Python Implementation
 
